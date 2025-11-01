@@ -9,5 +9,26 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello World!")
         }
+        post("/check-password") {
+            try {
+                val request = call.receive<PasswordRequest>()
+                val isValid = request.password == "12345"
+
+                val response = PasswordResponse(
+                    correct = isValid,
+                    message = if (isValid) "Пароль верный" else "Пароль неверный"
+                )
+
+                call.respond(response)
+            } catch (e: Exception) {
+                call.respond(PasswordResponse(correct = false, message = "Ошибка: неверный формат запроса"))
+            }
+        }
     }
 }
+
+@Serializable
+data class PasswordRequest(val password: String)
+
+@Serializable
+data class PasswordResponse(val correct: Boolean, val message: String)
