@@ -1,5 +1,6 @@
 package com.dialogai
 
+import com.dialogai.util.encode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -27,6 +28,18 @@ fun Application.configureRouting() {
                 call.respond(PasswordResponse(correct = false, message = "Ошибка: неверный формат запроса"))
             }
         }
+        post("api/auth/get-code-for-new-pin") {
+            try {
+                val request = call.receive<CheckLoginRequest>()
+                println("CheckLoginRequest=$request")
+                // Всегда возвращаем "1234" в ответе
+                val response = CheckLoginResponse(code = encode("1234"))
+                call.respond(response)
+            } catch (e: Exception) {
+                println("Error in check-login: ${e.message}")
+                call.respond(CheckLoginResponse(code = encode("1234"))) // Даже при ошибке возвращаем "1234"
+            }
+        }
     }
 }
 
@@ -35,3 +48,9 @@ data class PasswordRequest(val password: String)
 
 @Serializable
 data class PasswordResponse(val correct: Boolean, val message: String)
+
+@Serializable
+data class CheckLoginRequest(val login: String)
+
+@Serializable
+data class CheckLoginResponse(val code: String)
