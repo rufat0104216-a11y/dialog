@@ -3,11 +3,4 @@ ktor:
     modules:
       - com.dialogai.ApplicationKt.module
   deployment:
-    port: 8080
-    sslPort: 8443
-  security:
-    ssl:
-      keyStore: keystore.jks
-      keyAlias: selfsigned
-      keyStorePassword: password
-      privateKeyPassword: password
+    port: 80
