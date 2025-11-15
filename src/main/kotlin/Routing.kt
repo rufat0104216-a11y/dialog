@@ -1,6 +1,7 @@
 package com.dialogai
 
 import com.dialogai.util.encode
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -13,6 +14,16 @@ import javax.mail.internet.MimeMessage
 
 fun Application.configureRouting() {
     routing {
+        // Сначала — обработка проверки Let's Encrypt
+        get("/.well-known/acme-challenge/{token}") {
+            val token = call.parameters["token"]
+            if (token == "tHBk4cAEQvAaLRdVtGFBFhJdYPGRYS_stvXZjgi0CEU") {
+                call.respondText("tHBk4cAEQvAaLRdVtGFBFhJdYPGRYS_stvXZjgi0CEU.5gsoEYCibxdw0cBYEEpOkwlay7OKufNO9weuRSfJcb0")
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
         get("/") {
             println("Received Hello World!")
             call.respondText("Hello World!")
