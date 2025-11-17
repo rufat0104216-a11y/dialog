@@ -1,6 +1,7 @@
 package com.dialogai
 
 import com.dialogai.util.encode
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -14,7 +15,7 @@ import javax.mail.internet.MimeMessage
 
 fun Application.configureRouting() {
     routing {
-        // Сначала — обработка проверки Let's Encrypt
+        // Сначала — обработка проверки Let's Encrypt - для автообновления SSL каждые 3 месяца
         get("/.well-known/acme-challenge/{token}") {
             val token = call.parameters["token"]
             if (token == "tHBk4cAEQvAaLRdVtGFBFhJdYPGRYS_stvXZjgi0CEU") {
@@ -25,6 +26,25 @@ fun Application.configureRouting() {
         }
 
         get("/") {
+            try {
+                val htmlContent = this::class.java.classLoader.getResource("landing.html")?.readText()
+                if (htmlContent != null) {
+                    call.respondText(htmlContent, ContentType.Text.Html)
+                } else {
+                    call.respondText(
+                        "Лендинг временно недоступен. Пожалуйста, попробуйте позже.",
+                        ContentType.Text.Plain
+                    )
+                }
+            } catch (e: Exception) {
+                call.respondText(
+                    "Ошибка загрузки лендинга: ${e.message}",
+                    ContentType.Text.Plain
+                )
+            }
+        }
+
+        get("/hello") {
             println("Received Hello World!")
             call.respondText("Hello World!")
         }
