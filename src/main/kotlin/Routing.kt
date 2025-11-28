@@ -45,7 +45,7 @@ fun Application.configureRouting() {
         }
 
         get("/hello") {
-            println("Received Hello World!")
+            println("Received Hello World  12345!")
             call.respondText("Hello World!")
         }
         post("/check-password") {
